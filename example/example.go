@@ -18,7 +18,7 @@ type User struct {
 // params named header will put into http.header, params named query will put into querystring
 // body will put into body
 //
-//go:generate go run gitlab.yc345.tv/backend/restyless
+//go:generate go run github.com/wanglihui/restyless
 type UserProvider interface {
 	//GetUser
 	//host=http://www.baidu.com,url=/id

@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/format"
 	"go/parser"
@@ -134,7 +133,7 @@ type docstore = map[string]string
 
 func parseDoc(docList []*ast.Comment) docstore {
 	m := make(docstore)
-	fmt.Println(docList[0])
+	// fmt.Println(docList[0])
 	for _, v := range docList {
 		// 使用最后一条注视
 		doc := v
@@ -155,7 +154,7 @@ func parseDoc(docList []*ast.Comment) docstore {
 }
 func defaultParam(funcParam, interParam docstore) docstore {
 	for k, v := range interParam {
-		fmt.Println("k, v ==?", k, v)
+		// fmt.Println("k, v ==?", k, v)
 		if _, ok := funcParam[k]; !ok {
 			funcParam[k] = v
 		}
@@ -176,7 +175,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(pkgName, fileName, line, dir)
+	// fmt.Println(pkgName, fileName, line, dir)
 	//使用正则，找出接口名称
 	fset := token.NewFileSet()
 	fpath := strings.Join([]string{dir, fileName}, "/")
@@ -184,7 +183,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ast.Print(fset, f)
+	// ast.Print(fset, f)
 	fname := strings.ToLower(dir + "/" + typeName + ".gen.go")
 	fs, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
