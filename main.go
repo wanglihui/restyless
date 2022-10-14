@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gitlab.yc345.tv/backend/restyless/tpl"
+	"github.com/wanglihui/restyless/tpl"
 )
 
 type vistor struct {

@@ -1,4 +1,4 @@
-module gitlab.yc345.tv/backend/restyless
+module github.com/wanglihui/restyless
 
 go 1.19
 
