@@ -85,7 +85,7 @@ func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 			d.Query = append(d.Query, v)
 		} else if strings.Contains(v.TypeVal, "PathParam") {
 			d.PathParams = append(d.PathParams, v)
-		} else if strings.Contains(v.TypeVal, "BodyParam") && method != "Get" {
+		} else if method != "Get" && (strings.Contains(v.TypeVal, "BodyParam") || !isSimpleType(v.TypeVal)) {
 			d.Body = v
 		}
 	}
@@ -96,6 +96,13 @@ func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	if err := t.Execute(dst, d); err != nil {
 		panic(err)
 	}
+}
+
+func isSimpleType(typeVal string) bool {
+	return strings.Contains(typeVal, "string") ||
+		strings.Contains(typeVal, "int") ||
+		strings.Contains(typeVal, "float64") ||
+		strings.Contains(typeVal, "bool")
 }
 
 type HeadData struct {
