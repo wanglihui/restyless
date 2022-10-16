@@ -6,11 +6,16 @@ import (
 	"strings"
 )
 
+type Param struct {
+	Key     string
+	TypeVal string
+}
+
 type FuncData struct {
 	Name          string
 	URL           string
 	InterfaceName string
-	Params        []string
+	Params        []Param
 	Returns       []string
 }
 
@@ -19,9 +24,16 @@ func FuncTemplate(dst io.Writer, data FuncData) {
 func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
-	{{if .Headers}}r = r.SetHeaders({{.Headers}}){{end}}
-	{{if .Body}}r = r.SetBody({{.Body}}){{end}}
-	{{if .Query}}r = r.SetQuery({{.Query}}){{end}}
+	{{with .Headers -}}{{range .}}
+	r = r.SetHeader("{{.Key}}", string({{.Key}}))
+	{{end}}{{end}}
+	{{with .Query -}}{{range .}}
+	r=r.SetQueryParam("{{.Key}}", string({{.Key}}))
+	{{end}}{{end}}
+	{{with .PathParams -}}{{range .}}
+	r=r.SetPathParam("{{.Key}}", string({{.Key}}))
+	{{end}}{{end}}
+	{{if .Body}}{{if .Body.Key}}r=r.SetBody({{.Body.Key}}){{end}}{{end}}
 	{{if .ReturnStruct}}
 	var ret {{.ReturnStruct}}
 	r = r.SetResult(&ret)
@@ -38,15 +50,20 @@ func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 		ReturnStr    string
 		ParamStr     string
 		ReturnStruct string
-		Headers      string
-		Query        string
-		Body         string
+		Headers      []Param
+		Query        []Param
+		PathParams   []Param
+		Body         Param
 		Method       string
+	}
+	paramStr := []string{}
+	for _, v := range data.Params {
+		paramStr = append(paramStr, v.Key+" "+v.TypeVal)
 	}
 	d := comData{
 		FuncData:  data,
 		ReturnStr: strings.Join(data.Returns, ","),
-		ParamStr:  strings.Join(data.Params, ","),
+		ParamStr:  strings.Join(paramStr, ","),
 	}
 	if len(data.Returns) == 2 {
 		d.ReturnStruct = data.Returns[0]
@@ -61,12 +78,15 @@ func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	}
 	d.Method = method
 	for _, v := range data.Params {
-		if strings.Contains(v, "headers=") {
-			d.Headers = strings.Split(v, " ")[0]
-		} else if strings.Contains(v, "body ") {
-			d.Body = strings.Split(v, " ")[0]
-		} else if strings.Contains(v, "query ") {
-			d.Query = strings.Split(v, " ")[0]
+		// fmt.Println(v)
+		if strings.Contains(v.TypeVal, "HeaderParam") {
+			d.Headers = append(d.Headers, v)
+		} else if strings.Contains(v.TypeVal, "QueryParam") {
+			d.Query = append(d.Query, v)
+		} else if strings.Contains(v.TypeVal, "PathParam") {
+			d.PathParams = append(d.PathParams, v)
+		} else if strings.Contains(v.TypeVal, "BodyParam") && method != "Get" {
+			d.Body = v
 		}
 	}
 	t, err := template.New("tpl").Parse(tpl)

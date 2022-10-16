@@ -6,6 +6,8 @@ package example
 import (
 	"context"
 	_ "fmt"
+
+	"github.com/wanglihui/restyless/types"
 )
 
 type User struct {
@@ -22,17 +24,17 @@ type User struct {
 type UserProvider interface {
 	//GetUser
 	//host=http://www.baidu.com,url=/id
-	GetUser(ctx context.Context, userID string) (User, error)
+	GetUser(ctx context.Context, userID types.QueryParam) (User, error)
 	//PostUser
 	//host=http://www.dixincaigang.cn,url=/user/
-	PostUser(ctx context.Context, body User) (User, error)
+	PostUser(ctx context.Context, user User) (User, error)
 	//DeleteUser
-	//url=/user/:id
-	DeleteUser(ctx context.Context, userID string) error
+	//url=/user/{userID}
+	DeleteUser(ctx context.Context, userID types.PathParam) error
 	//PutUser
-	//url=/user/:id
-	PutUser(ctx context.Context, user User) (User, error)
+	//url=/user/{userID}
+	PutUser(ctx context.Context, userID types.PathParam, user User) (User, error)
 	//PostUser2
 	//url=/user2
-	PostUser2(ctx context.Context, headers string, user User) (User, error)
+	PostUser2(ctx context.Context, uid types.HeaderParam, token types.HeaderParam, user User) (User, error)
 }

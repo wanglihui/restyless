@@ -58,7 +58,7 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 			if idx < 0 {
 				return nil
 			}
-			var interParam docstore
+			var interDocParam docstore
 			v := genDecl.Specs[idx].(*ast.TypeSpec)
 			t, ok := v.Type.(*ast.InterfaceType)
 			if !ok {
@@ -70,17 +70,17 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 			}
 			tpl.StructTemplate(it.dst, structData)
 			if genDecl.Doc != nil && len(genDecl.Doc.List) > 0 {
-				interParam = parseDoc(genDecl.Doc.List)
+				interDocParam = parseDoc(genDecl.Doc.List)
 			}
 			// 处理interface中定义的函数
 			for _, v := range t.Methods.List {
 				// 函数上注解信息，例如host=http://www, url=/token
-				var funcParam docstore
+				var funcDocParam docstore
 				if v.Doc != nil && len(v.Doc.List) > 0 {
-					funcParam = parseDoc(v.Doc.List)
+					funcDocParam = parseDoc(v.Doc.List)
 				}
-				funcParam = defaultParam(funcParam, interParam)
-				funcParams := []string{}
+				funcDocParam = defaultParam(funcDocParam, interDocParam)
+				funcParams := []tpl.Param{}
 				params := v.Type.(*ast.FuncType).Params
 				for _, v := range params.List {
 					name := v.Names[0].Name
@@ -96,7 +96,7 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 						}
 					}
 					if typ != "" {
-						funcParams = append(funcParams, name+" "+typ)
+						funcParams = append(funcParams, tpl.Param{Key: name, TypeVal: typ})
 					}
 				}
 				returnParams := []string{}
@@ -121,7 +121,7 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 					Params:        funcParams,
 					Returns:       returnParams,
 					InterfaceName: it.structName,
-					URL:           funcParam["host"] + funcParam["url"],
+					URL:           funcDocParam["host"] + funcDocParam["url"],
 				})
 			}
 		}
@@ -133,9 +133,7 @@ type docstore = map[string]string
 
 func parseDoc(docList []*ast.Comment) docstore {
 	m := make(docstore)
-	// fmt.Println(docList[0])
 	for _, v := range docList {
-		// 使用最后一条注视
 		doc := v
 		reg, _ := regexp.Compile(`^//\s*`)
 		text := string(reg.ReplaceAll([]byte(doc.Text), []byte("")))
@@ -154,7 +152,6 @@ func parseDoc(docList []*ast.Comment) docstore {
 }
 func defaultParam(funcParam, interParam docstore) docstore {
 	for k, v := range interParam {
-		// fmt.Println("k, v ==?", k, v)
 		if _, ok := funcParam[k]; !ok {
 			funcParam[k] = v
 		}
