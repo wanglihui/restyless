@@ -5,6 +5,7 @@
 开发者只需要定义接口，增加必要的注释，restyless就可以生成请求的模版代码；
 
 ### 使用注意
+- 目前注释中，只解析host,url; 且函数注释优先级高于接口注释；
 - 参数类型为types.QueryParam 的参数将放到 resty QueryParam中
 - 参数类型为types.PathParam 的参数将放到 resty PathParam中
 - 参数类型为types.HeaderParam 的参数将放到 resty Header中
