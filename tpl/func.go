@@ -21,7 +21,7 @@ type FuncData struct {
 
 func FuncTemplate(dst io.Writer, data FuncData) {
 	var tpl = `
-func (it *{{.InterfaceName}}) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
+func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	{{with .Headers -}}{{range .}}
@@ -133,7 +133,7 @@ type StructData struct {
 func StructTemplate(dst io.Writer, data StructData) {
 	const tpl = `
 func New{{.TypeName}}Impl(r *resty.Client) {{.TypeName}} {
-	return &{{.TypeName}}{
+	return &{{.TypeName}}Impl{
 		r : r,
 	}
 }
