@@ -57,3 +57,44 @@ func TestUserList(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestUserPoint(t *testing.T) {
+	httpmock.ActivateNonDefault(r.GetClient())
+	responser, err := httpmock.NewJsonResponder(200, User{
+		ID:   "1",
+		Name: "test",
+	})
+	if err != nil {
+		t.Error(err)
+	}
+	reg, err := regexp.Compile(`http://www.baidu.com/*`)
+	if err != nil {
+		t.Error(err)
+	}
+	httpmock.RegisterRegexpResponder("GET", reg, responser)
+	userProvider := NewUserProviderImpl(r)
+	if user, err := userProvider.GetUserPoint(context.Background()); err != nil {
+		t.Error(err)
+	} else if user.ID != "1" {
+		t.Fail()
+	}
+}
+
+func TestUserAge(t *testing.T) {
+	httpmock.ActivateNonDefault(r.GetClient())
+	responser, err := httpmock.NewJsonResponder(200, 1)
+	if err != nil {
+		t.Error(err)
+	}
+	reg, err := regexp.Compile(`http://www.baidu.com/*`)
+	if err != nil {
+		t.Error(err)
+	}
+	httpmock.RegisterRegexpResponder("GET", reg, responser)
+	userProvider := NewUserProviderImpl(r)
+	if age, err := userProvider.GetUserAge(context.Background(), "1"); err != nil {
+		t.Error(err)
+	} else if age != 1 {
+		t.Fail()
+	}
+}
