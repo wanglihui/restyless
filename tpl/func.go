@@ -1,7 +1,6 @@
 package tpl
 
 import (
-	"fmt"
 	"html/template"
 	"io"
 	"strings"
@@ -99,7 +98,7 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 		if strings.Contains(v.TypeVal, "context.Context") {
 			continue
 		}
-		fmt.Println(v)
+		// fmt.Println(v)
 		if strings.Contains(v.TypeVal, "HeaderParam") {
 			d.Headers = append(d.Headers, v)
 		} else if strings.Contains(v.TypeVal, "QueryParam") {
