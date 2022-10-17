@@ -59,7 +59,7 @@ import (
 	 "github.com/go-resty/resty/v2"
 	 "gitlab.yc345.tv/teacher/golang-base/httperror"
 )
-func NewUserProviderImpl(r *resty.Client) *UserProviderImpl {
+func NewUserProviderImpl(r *resty.Client) UserProvider {
 	return &UserProviderImpl{
 		r : r,
 	}
