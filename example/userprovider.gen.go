@@ -8,7 +8,7 @@ import (
 
 	"github.com/wanglihui/restyless/types"
 	 "github.com/go-resty/resty/v2"
-	 "gitlab.yc345.tv/teacher/golang-base/httperror"
+	 "github.com/wanglihui/httperror"
 )
 func NewUserProviderImpl(r *resty.Client) *UserProviderImpl {
 	return &UserProviderImpl{

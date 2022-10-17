@@ -38,7 +38,7 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 			genDecl.Specs = append(genDecl.Specs, &ast.ImportSpec{
 				Doc:     &ast.CommentGroup{},
 				Name:    &ast.Ident{},
-				Path:    &ast.BasicLit{ValuePos: 0, Kind: token.STRING, Value: `"gitlab.yc345.tv/teacher/golang-base/httperror"`},
+				Path:    &ast.BasicLit{ValuePos: 0, Kind: token.STRING, Value: `"github.com/wanglihui/httperror"`},
 				Comment: &ast.CommentGroup{},
 				EndPos:  0,
 			})
