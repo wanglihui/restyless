@@ -132,13 +132,13 @@ type StructData struct {
 
 func StructTemplate(dst io.Writer, data StructData) {
 	const tpl = `
-func New{{.TypeName}}(r *resty.Client) *{{.TypeName}} {
+func New{{.TypeName}}Impl(r *resty.Client) {{.TypeName}} {
 	return &{{.TypeName}}{
 		r : r,
 	}
 }
 
-type {{.TypeName}}	struct {
+type {{.TypeName}}Impl	struct {
 	r *resty.Client
 }
 `

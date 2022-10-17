@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/format"
 	"go/parser"
@@ -167,9 +166,9 @@ func main() {
 		fileName   = os.Getenv("GOFILE")
 		line       = os.Getenv("GOLINE")
 		typeName   = os.Args[1]
-		structName = typeName + "Impl"
+		structName = typeName
 	)
-	fmt.Println(os.Args)
+	// fmt.Println(os.Args)
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)

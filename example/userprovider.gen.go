@@ -10,8 +10,8 @@ import (
 	 "github.com/go-resty/resty/v2"
 	 "github.com/wanglihui/httperror"
 )
-func NewUserProviderImpl(r *resty.Client) *UserProviderImpl {
-	return &UserProviderImpl{
+func NewUserProviderImpl(r *resty.Client) UserProvider {
+	return &UserProvider{
 		r : r,
 	}
 }
@@ -20,7 +20,7 @@ type UserProviderImpl	struct {
 	r *resty.Client
 }
 
-func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam) (User,error) {
+func (it *UserProvider) GetUser (ctx context.Context,userID types.QueryParam) (User,error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -37,7 +37,7 @@ func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam
 	
 }
 
-func (it *UserProviderImpl) PostUser (ctx context.Context,user User) (User,error) {
+func (it *UserProvider) PostUser (ctx context.Context,user User) (User,error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -52,7 +52,7 @@ func (it *UserProviderImpl) PostUser (ctx context.Context,user User) (User,error
 	
 }
 
-func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathParam) (error) {
+func (it *UserProvider) DeleteUser (ctx context.Context,userID types.PathParam) (error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -67,7 +67,7 @@ func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathPar
 	
 }
 
-func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,user User) (User,error) {
+func (it *UserProvider) PutUser (ctx context.Context,userID types.PathParam,user User) (User,error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -84,7 +84,7 @@ func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,
 	
 }
 
-func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam,token types.HeaderParam,user User) (User,error) {
+func (it *UserProvider) PostUser2 (ctx context.Context,uid types.HeaderParam,token types.HeaderParam,user User) (User,error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -102,3 +102,4 @@ func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam
 	return ret, err
 	
 }
+
