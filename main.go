@@ -184,7 +184,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ast.Print(fset, f)
+	// ast.Print(fset, f)
 	fname := strings.ToLower(dir + "/" + typeName + ".gen.go")
 	fs, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
