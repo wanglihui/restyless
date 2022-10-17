@@ -42,10 +42,18 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	var ret {{.ReturnStruct.TypeVal}}
 	{{end}}
 	r = r.SetResult(&ret)
-	_, err := r.{{.Method}}("{{.URL}}")
+	{{end}}
+	resp, err := r.{{.Method}}("{{.URL}}")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	{{if .ReturnStruct.TypeVal}}
 	return ret, err
 	{{else}}
-	_, err := r.{{.Method}}("{{.URL}}")
 	return err
 	{{end}}
 }

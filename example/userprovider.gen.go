@@ -34,7 +34,16 @@ func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam
 	var ret User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Get("http://www.baidu.com/id")
+	
+	resp, err := r.Get("http://www.baidu.com/id")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -51,7 +60,16 @@ func (it *UserProviderImpl) PostUser (ctx context.Context,user User) ( User, err
 	var ret User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Post("http://www.dixincaigang.cn/user/")
+	
+	resp, err := r.Post("http://www.dixincaigang.cn/user/")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -66,7 +84,15 @@ func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathPar
 	
 	
 	
-	_, err := r.Delete("http://www.baidu.com/user/{userID}")
+	resp, err := r.Delete("http://www.baidu.com/user/{userID}")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return err
 	
 }
@@ -85,7 +111,16 @@ func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,
 	var ret User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Put("http://www.baidu.com/user/{userID}")
+	
+	resp, err := r.Put("http://www.baidu.com/user/{userID}")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -106,7 +141,16 @@ func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam
 	var ret User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Post("http://www.baidu.com/user2")
+	
+	resp, err := r.Post("http://www.baidu.com/user2")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -123,7 +167,16 @@ func (it *UserProviderImpl) GetUsers (ctx context.Context) ( []User, error) {
 	var ret []User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Get("http://www.baidu.com/users")
+	
+	resp, err := r.Get("http://www.baidu.com/users")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -140,7 +193,16 @@ func (it *UserProviderImpl) GetUserPoint (ctx context.Context) ( *User, error) {
 	var ret = new(User)
 	
 	r = r.SetResult(&ret)
-	_, err := r.Get("http://www.baidu.com/user/{userId}/points")
+	
+	resp, err := r.Get("http://www.baidu.com/user/{userId}/points")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -159,7 +221,16 @@ func (it *UserProviderImpl) GetUserAge (ctx context.Context,userId types.PathPar
 	var ret int
 	
 	r = r.SetResult(&ret)
-	_, err := r.Get("http://www.baidu.com/user/{userId}/age")
+	
+	resp, err := r.Get("http://www.baidu.com/user/{userId}/age")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }
@@ -176,7 +247,16 @@ func (it *UserProviderImpl) PostUserUseMap (ctx context.Context,user map[string]
 	var ret User
 	
 	r = r.SetResult(&ret)
-	_, err := r.Post("http://www.baidu.com/user/map")
+	
+	resp, err := r.Post("http://www.baidu.com/user/map")
+	if err == nil && resp.IsError() {
+		if v, ok := resp.Error().(*httperror.HTTPError); ok && v.Message != "" && v.StatusCode > 0 {
+			err = v
+		} else {
+			err = httperror.New(resp.StatusCode(), string(resp.Body()), int64(resp.StatusCode()))
+		}
+	}
+	
 	return ret, err
 	
 }

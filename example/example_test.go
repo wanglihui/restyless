@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
+	"github.com/wanglihui/httperror"
 )
 
 var r = resty.New()
@@ -96,5 +97,55 @@ func TestUserAge(t *testing.T) {
 		t.Error(err)
 	} else if age != 1 {
 		t.Fail()
+	}
+}
+
+func TestHttpError(t *testing.T) {
+	httpmock.ActivateNonDefault(r.GetClient())
+	responser, err := httpmock.NewJsonResponder(400, httperror.BadRequest("test", 4000))
+	if err != nil {
+		t.Error(err)
+	}
+	reg, err := regexp.Compile(`http://www.baidu.com/*`)
+	if err != nil {
+		t.Error(err)
+	}
+	httpmock.RegisterRegexpResponder("GET", reg, responser)
+	userProvider := NewUserProviderImpl(r)
+	if _, err := userProvider.GetUserAge(context.Background(), "1"); err == nil {
+		// fmt.Println("err=>", err)
+		t.Fail()
+	} else {
+		// fmt.Println(err)
+		if err.(*httperror.HTTPError).Code != 4000 {
+			t.Fail()
+		}
+	}
+}
+
+func TestOtherError(t *testing.T) {
+	httpmock.ActivateNonDefault(r.GetClient())
+	m := map[string]string{
+		"code1": "10010",
+		"msg":   "test error",
+	}
+	responser, err := httpmock.NewJsonResponder(400, m)
+	if err != nil {
+		t.Error(err)
+	}
+	reg, err := regexp.Compile(`http://www.baidu.com/*`)
+	if err != nil {
+		t.Error(err)
+	}
+	httpmock.RegisterRegexpResponder("GET", reg, responser)
+	userProvider := NewUserProviderImpl(r)
+	if _, err := userProvider.GetUserAge(context.Background(), "1"); err == nil {
+		// fmt.Println("err=>", err)
+		t.Fail()
+	} else {
+		// fmt.Println(err)
+		if err.(*httperror.HTTPError).StatusCode != 400 {
+			t.Fail()
+		}
 	}
 }
