@@ -84,35 +84,17 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 				params := v.Type.(*ast.FuncType).Params
 				for _, v := range params.List {
 					name := v.Names[0].Name
-					var typ = ""
-					switch v.Type.(type) {
-					case *ast.SelectorExpr:
-						typ = v.Type.(*ast.SelectorExpr).X.(*ast.Ident).Name + "." + v.Type.(*ast.SelectorExpr).Sel.Name
-					case *ast.Ident:
-						if v.Type.(*ast.Ident).Obj != nil {
-							typ = v.Type.(*ast.Ident).Obj.Name
-						} else {
-							typ = v.Type.(*ast.Ident).Name
-						}
-					}
+					typ, star := getType(v)
 					if typ != "" {
-						funcParams = append(funcParams, tpl.Param{Key: name, TypeVal: typ})
+						funcParams = append(funcParams, tpl.Param{Key: name, TypeVal: typ, Star: star})
 					}
 				}
-				returnParams := []string{}
+				returnParams := []tpl.Param{}
 				returns := v.Type.(*ast.FuncType).Results
 				for _, v := range returns.List {
-					typ := ""
-					switch v.Type.(type) {
-					case *ast.SelectorExpr:
-						typ = v.Type.(*ast.SelectorExpr).X.(*ast.Ident).Name + "." + v.Type.(*ast.SelectorExpr).Sel.Name
-					case *ast.Ident:
-						if v.Type.(*ast.Ident) != nil {
-							typ = v.Type.(*ast.Ident).Name
-						}
-					}
+					typ, star := getType(v)
 					if typ != "" {
-						returnParams = append(returnParams, typ)
+						returnParams = append(returnParams, tpl.Param{Key: "", TypeVal: typ, Star: star})
 					}
 				}
 				// fmt.Println(funcParam)
@@ -127,6 +109,27 @@ func (it *vistor) Visit(node ast.Node) ast.Visitor {
 		}
 	}
 	return it
+}
+
+func getType(v *ast.Field) (string, bool) {
+	typ := ""
+	star := false
+	switch v.Type.(type) {
+	case *ast.SelectorExpr:
+		typ = v.Type.(*ast.SelectorExpr).X.(*ast.Ident).Name + "." + v.Type.(*ast.SelectorExpr).Sel.Name
+	case *ast.Ident:
+		if v.Type.(*ast.Ident) != nil {
+			typ = v.Type.(*ast.Ident).Name
+		}
+	case *ast.StarExpr:
+		typ = v.Type.(*ast.StarExpr).X.(*ast.Ident).Name
+		star = true
+	case *ast.ArrayType:
+		typ = "[]" + v.Type.(*ast.ArrayType).Elt.(*ast.Ident).Name
+	case *ast.MapType:
+		typ = "map[" + v.Type.(*ast.MapType).Key.(*ast.Ident).Name + "]" + v.Type.(*ast.MapType).Value.(*ast.Ident).Name
+	}
+	return typ, star
 }
 
 type docstore = map[string]string
@@ -181,7 +184,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// ast.Print(fset, f)
+	ast.Print(fset, f)
 	fname := strings.ToLower(dir + "/" + typeName + ".gen.go")
 	fs, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {

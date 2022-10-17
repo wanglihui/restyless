@@ -20,7 +20,7 @@ type UserProviderImpl	struct {
 	r *resty.Client
 }
 
-func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam) (User,error) {
+func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam) ( User, error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -30,14 +30,16 @@ func (it *UserProviderImpl) GetUser (ctx context.Context,userID types.QueryParam
 	
 	
 	
+	
 	var ret User
+	
 	r = r.SetResult(&ret)
 	_, err := r.Get("http://www.baidu.com/id")
 	return ret, err
 	
 }
 
-func (it *UserProviderImpl) PostUser (ctx context.Context,user User) (User,error) {
+func (it *UserProviderImpl) PostUser (ctx context.Context,user User) ( User, error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -45,14 +47,16 @@ func (it *UserProviderImpl) PostUser (ctx context.Context,user User) (User,error
 	
 	r=r.SetBody(user)
 	
+	
 	var ret User
+	
 	r = r.SetResult(&ret)
 	_, err := r.Post("http://www.dixincaigang.cn/user/")
 	return ret, err
 	
 }
 
-func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathParam) (error) {
+func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathParam) ( error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -60,14 +64,14 @@ func (it *UserProviderImpl) DeleteUser (ctx context.Context,userID types.PathPar
 	
 	r=r.SetPathParam("userID", string(userID))
 	
-	r=r.SetBody(ctx)
+	
 	
 	_, err := r.Delete("http://www.baidu.com/user/{userID}")
 	return err
 	
 }
 
-func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,user User) (User,error) {
+func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,user User) ( User, error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -77,14 +81,16 @@ func (it *UserProviderImpl) PutUser (ctx context.Context,userID types.PathParam,
 	
 	r=r.SetBody(user)
 	
+	
 	var ret User
+	
 	r = r.SetResult(&ret)
 	_, err := r.Put("http://www.baidu.com/user/{userID}")
 	return ret, err
 	
 }
 
-func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam,token types.HeaderParam,user User) (User,error) {
+func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam,token types.HeaderParam,user User) ( User, error) {
 	var e httperror.HTTPError
 	r := it.r.R().SetError(e)
 	
@@ -96,9 +102,81 @@ func (it *UserProviderImpl) PostUser2 (ctx context.Context,uid types.HeaderParam
 	
 	r=r.SetBody(user)
 	
+	
 	var ret User
+	
 	r = r.SetResult(&ret)
 	_, err := r.Post("http://www.baidu.com/user2")
+	return ret, err
+	
+}
+
+func (it *UserProviderImpl) GetUsers (ctx context.Context) ( []User, error) {
+	var e httperror.HTTPError
+	r := it.r.R().SetError(e)
+	
+	
+	
+	
+	
+	
+	var ret []User
+	
+	r = r.SetResult(&ret)
+	_, err := r.Get("http://www.baidu.com/users")
+	return ret, err
+	
+}
+
+func (it *UserProviderImpl) GetUserPoint (ctx context.Context) ( *User, error) {
+	var e httperror.HTTPError
+	r := it.r.R().SetError(e)
+	
+	
+	
+	
+	
+	
+	var ret = new(User)
+	
+	r = r.SetResult(&ret)
+	_, err := r.Get("http://www.baidu.com/user/{userId}/points")
+	return ret, err
+	
+}
+
+func (it *UserProviderImpl) GetUserAge (ctx context.Context,userId types.PathParam) ( int, error) {
+	var e httperror.HTTPError
+	r := it.r.R().SetError(e)
+	
+	
+	
+	r=r.SetPathParam("userId", string(userId))
+	
+	
+	
+	
+	var ret int
+	
+	r = r.SetResult(&ret)
+	_, err := r.Get("http://www.baidu.com/user/{userId}/age")
+	return ret, err
+	
+}
+
+func (it *UserProviderImpl) PostUserUseMap (ctx context.Context,user map[string]string) ( User, error) {
+	var e httperror.HTTPError
+	r := it.r.R().SetError(e)
+	
+	
+	
+	r=r.SetBody(user)
+	
+	
+	var ret User
+	
+	r = r.SetResult(&ret)
+	_, err := r.Post("http://www.baidu.com/user/map")
 	return ret, err
 	
 }

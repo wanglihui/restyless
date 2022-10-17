@@ -37,4 +37,12 @@ type UserProvider interface {
 	//PostUser2
 	//url=/user2
 	PostUser2(ctx context.Context, uid types.HeaderParam, token types.HeaderParam, user User) (User, error)
+	//url=/users
+	GetUsers(ctx context.Context) ([]User, error)
+	//url=/user/{userId}/points
+	GetUserPoint(ctx context.Context) (*User, error)
+	//url=/user/{userId}/age
+	GetUserAge(ctx context.Context, userId types.PathParam) (int, error)
+	//url=/user/map
+	PostUserUseMap(ctx context.Context, user map[string]string) (User, error)
 }

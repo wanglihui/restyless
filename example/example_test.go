@@ -34,3 +34,26 @@ func TestSome(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestUserList(t *testing.T) {
+	httpmock.ActivateNonDefault(r.GetClient())
+	responser, err := httpmock.NewJsonResponder(200, []User{{
+		ID:   "1",
+		Name: "test",
+	},
+	})
+	if err != nil {
+		t.Error(err)
+	}
+	reg, err := regexp.Compile(`http://www.baidu.com/*`)
+	if err != nil {
+		t.Error(err)
+	}
+	httpmock.RegisterRegexpResponder("GET", reg, responser)
+	userProvider := NewUserProviderImpl(r)
+	if users, err := userProvider.GetUsers(context.Background()); err != nil {
+		t.Error(err)
+	} else if len(users) != 1 {
+		t.Fail()
+	}
+}

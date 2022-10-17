@@ -1,6 +1,7 @@
 package tpl
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"strings"
@@ -9,6 +10,7 @@ import (
 type Param struct {
 	Key     string
 	TypeVal string
+	Star    bool
 }
 
 type FuncData struct {
@@ -16,7 +18,7 @@ type FuncData struct {
 	URL           string
 	InterfaceName string
 	Params        []Param
-	Returns       []string
+	Returns       []Param
 }
 
 func FuncTemplate(dst io.Writer, data FuncData) {
@@ -34,8 +36,12 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	r=r.SetPathParam("{{.Key}}", string({{.Key}}))
 	{{end}}{{end}}
 	{{if .Body}}{{if .Body.Key}}r=r.SetBody({{.Body.Key}}){{end}}{{end}}
-	{{if .ReturnStruct}}
-	var ret {{.ReturnStruct}}
+	{{if .ReturnStruct.TypeVal}}
+	{{if .ReturnStruct.Star}}
+	var ret = new({{.ReturnStruct.TypeVal}})
+	{{else}}
+	var ret {{.ReturnStruct.TypeVal}}
+	{{end}}
 	r = r.SetResult(&ret)
 	_, err := r.{{.Method}}("{{.URL}}")
 	return ret, err
@@ -49,7 +55,7 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 		FuncData
 		ReturnStr    string
 		ParamStr     string
-		ReturnStruct string
+		ReturnStruct Param
 		Headers      []Param
 		Query        []Param
 		PathParams   []Param
@@ -57,12 +63,24 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 		Method       string
 	}
 	paramStr := []string{}
+	returnStr := []string{}
 	for _, v := range data.Params {
-		paramStr = append(paramStr, v.Key+" "+v.TypeVal)
+		var fullType = v.Key + " " + v.TypeVal
+		if v.Star {
+			fullType = v.Key + " *" + v.TypeVal
+		}
+		paramStr = append(paramStr, fullType)
+	}
+	for _, v := range data.Returns {
+		var fullType = v.Key + " " + v.TypeVal
+		if v.Star {
+			fullType = v.Key + " *" + v.TypeVal
+		}
+		returnStr = append(returnStr, fullType)
 	}
 	d := comData{
 		FuncData:  data,
-		ReturnStr: strings.Join(data.Returns, ","),
+		ReturnStr: strings.Join(returnStr, ","),
 		ParamStr:  strings.Join(paramStr, ","),
 	}
 	if len(data.Returns) == 2 {
@@ -78,7 +96,10 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	}
 	d.Method = method
 	for _, v := range data.Params {
-		// fmt.Println(v)
+		if strings.Contains(v.TypeVal, "context.Context") {
+			continue
+		}
+		fmt.Println(v)
 		if strings.Contains(v.TypeVal, "HeaderParam") {
 			d.Headers = append(d.Headers, v)
 		} else if strings.Contains(v.TypeVal, "QueryParam") {
@@ -99,10 +120,13 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 }
 
 func isSimpleType(typeVal string) bool {
-	return strings.Contains(typeVal, "string") ||
-		strings.Contains(typeVal, "int") ||
-		strings.Contains(typeVal, "float64") ||
-		strings.Contains(typeVal, "bool")
+	return (!strings.Contains(typeVal, "map") &&
+		!strings.Contains(typeVal, "[]") &&
+		!strings.Contains(typeVal, "*")) &&
+		(strings.Contains(typeVal, "string") ||
+			strings.Contains(typeVal, "int") ||
+			strings.Contains(typeVal, "float64") ||
+			strings.Contains(typeVal, "bool"))
 }
 
 type HeadData struct {
