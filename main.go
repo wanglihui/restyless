@@ -165,7 +165,7 @@ func main() {
 		pkgName    = os.Getenv("GOPACKAGE")
 		fileName   = os.Getenv("GOFILE")
 		line       = os.Getenv("GOLINE")
-		typeName   = "UserProvider"
+		typeName   = os.Args[0]
 		structName = typeName + "Impl"
 	)
 	dir, err := os.Getwd()
