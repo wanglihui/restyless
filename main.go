@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"go/ast"
 	"go/format"
@@ -12,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/wanglihui/restyless/tpl"
+	"golang.org/x/tools/imports"
 )
 
 type vistor struct {
@@ -177,6 +179,9 @@ func main() {
 		panic(err)
 	}
 	// fmt.Println(pkgName, fileName, line, dir)
+	bs := make([]byte, 0)
+	dst := bytes.NewBuffer(bs)
+
 	//使用正则，找出接口名称
 	fset := token.NewFileSet()
 	fpath := strings.Join([]string{dir, fileName}, "/")
@@ -191,17 +196,43 @@ func main() {
 		panic(err)
 	}
 	defer fs.Close()
+
 	data := tpl.HeadData{
 		PkgName:  pkgName,
 		FileName: fileName,
 		Line:     line,
 	}
-	tpl.FuncHead(fs, data)
+	tpl.FuncHead(dst, data)
 	v := &vistor{
 		interName:  typeName,
 		structName: structName,
 		fset:       fset,
-		dst:        fs,
+		dst:        dst,
+	}
+	// fmt.Println("before", string(bs))
+	// fs.Close()
+	// for {
+	// 	if batch, err := dst.ReadBytes(10); err != nil {
+	// 		if err == io.EOF {
+	// 			break
+	// 		}
+	// 		panic(err)
+	// 	} else {
+	// 		fmt.Println("else====>", string(batch))
+	// 		bs = append(bs, batch...)
+	// 	}
+	// }
+	// bs, err = ioutil.ReadAll(fs)
+	// bs, err = format.Source(bs)
+	if err != nil {
+		panic(err)
 	}
 	ast.Walk(v, f)
+	bs = dst.Bytes()
+	bs, err = imports.Process(fname, bs, nil)
+	if err != nil {
+		panic(err)
+	}
+	// fmt.Println("after", string(bs))
+	fs.Write(bs)
 }

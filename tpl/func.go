@@ -124,6 +124,7 @@ func (it *{{.InterfaceName}}Impl) {{.Name}} ({{.ParamStr}}) ({{.ReturnStr}}) {
 	if err := t.Execute(dst, d); err != nil {
 		panic(err)
 	}
+	// fmt.Println(dst)
 }
 
 func isSimpleType(typeVal string) bool {

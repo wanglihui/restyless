@@ -5,15 +5,16 @@ package example
 
 import (
 	"context"
-	_ "fmt"
+	"fmt"
 
 	"github.com/wanglihui/restyless/types"
 )
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Age  int    `json:"age"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Age     int    `json:"age"`
+	TestKey fmt.Formatter
 }
 
 // UserProvider
